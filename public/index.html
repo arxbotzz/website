@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b12">
+  <title>Scrapr - Media Downloader</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/">SCRAPR<span>.</span></a>
+    <span class="status"><i></i> SYSTEM ONLINE</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">UNIVERSAL MEDIA EXTRACTOR</div>
+      <h1>Download media.<br><span>Keep it simple.</span></h1>
+      <p>Masukkan tautan media dari platform yang didukung Scrapr.</p>
+
+      <form id="form">
+        <div class="input-wrap">
+          <span>↗</span>
+          <input id="url" type="url" placeholder="Tempel URL media di sini..." required>
+          <button id="submit" type="submit">Process URL</button>
+        </div>
+      </form>
+
+      <div class="supported">
+        TikTok · Instagram · YouTube · X · Facebook · TeraBox · Reddit
+      </div>
+
+      <div id="message" class="message hidden"></div>
+      <section id="result" class="result hidden"></section>
+    </section>
+  </main>
+
+  <footer>
+    <span>SCRAPR WEB DOWNLOADER</span>
+    <span>Powered by @coflyn/scrapr</span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

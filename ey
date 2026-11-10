@@ -1,0 +1,7 @@
+user.email=mukthiep@gmail.com
+user.name=arxbotzz
+credential.https://github.com.helper=
+credential.https://github.com.helper=!/data/data/com.termux/files/usr/bin/gh auth git-credential
+credential.https://gist.github.com.helper=
+credential.https://gist.github.com.helper=!/data/data/com.termux/files/usr/bin/gh auth git-credential
+init.defaultbranch=main

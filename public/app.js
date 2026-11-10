@@ -1,3 +1,4 @@
+
 const form = document.querySelector('#form');
 const input = document.querySelector('#url');
 const button = document.querySelector('#submit');
@@ -13,20 +14,48 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
 
   result.classList.add('hidden');
-  message.classList.remove('hidden');
   showMessage('Sedang memproses URL...');
+
   button.disabled = true;
   button.textContent = 'Processing...';
 
   try {
     const response = await fetch('/api/extract', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: input.value.trim() })
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        url: input.value.trim()
+      })
     });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Ekstraksi gagal.');
+    // Baca sebagai teks terlebih dahulu
+    const responseText = await response.text();
+
+    // Pastikan respons benar-benar JSON
+    let data;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      console.error('Respons API bukan JSON:', responseText);
+
+      throw new Error(
+        `Server mengirim respons bukan JSON. HTTP ${response.status}. Periksa API Vercel.`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || `Ekstraksi gagal. HTTP ${response.status}`
+      );
+    }
+
+    if (!Array.isArray(data.downloads)) {
+      throw new Error('Format respons API tidak valid: downloads tidak ditemukan.');
+    }
 
     result.replaceChildren();
 
@@ -42,8 +71,9 @@ form.addEventListener('submit', async event => {
     }
 
     const title = document.createElement('h2');
-    title.textContent = data.title;
+    title.textContent = data.title || 'Media ditemukan';
     preview.append(title);
+
     result.append(preview);
 
     data.downloads.forEach((item, index) => {
@@ -51,10 +81,14 @@ form.addEventListener('submit', async event => {
       row.className = 'option';
 
       const info = document.createElement('div');
+
       const name = document.createElement('strong');
       name.textContent = item.quality || `Pilihan ${index + 1}`;
+
       const type = document.createElement('small');
-      type.textContent = ` ${item.type || 'file'} ${item.size ? '· ' + item.size : ''}`;
+      type.textContent =
+        ` ${item.type || 'file'} ${item.size ? '· ' + item.size : ''}`;
+
       info.append(name, document.createElement('br'), type);
 
       const link = document.createElement('a');
@@ -68,9 +102,14 @@ form.addEventListener('submit', async event => {
     });
 
     result.classList.remove('hidden');
-    showMessage(`Berhasil. ${data.downloads.length} pilihan ditemukan.`);
+
+    showMessage(
+      `Berhasil. ${data.downloads.length} pilihan ditemukan.`
+    );
+
   } catch (error) {
-    showMessage(error.message);
+    console.error('Extraction error:', error);
+    showMessage(error.message || 'Terjadi kesalahan.');
   } finally {
     button.disabled = false;
     button.textContent = 'Process URL';
